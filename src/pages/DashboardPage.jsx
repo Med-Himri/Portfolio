@@ -4,6 +4,7 @@ import { supabase } from "@/lib/supabase";
 import { useSession } from "@/lib/useSession";
 import { useDashboardStore } from "@/store/dashboardStore";
 import { useSkillsStore } from "@/store/skillsStore";
+import { useCertificationsStore } from "@/store/certificationsStore";
 
 const emptyProjectForm = {
   title: "",
@@ -31,6 +32,23 @@ const emptySkillForm = { group_name: "", items: "" };
 function skillGroupToForm(s) {
   if (!s) return emptySkillForm;
   return { group_name: s.group_name, items: s.items.join(", ") };
+}
+
+const emptyCertificationForm = {
+  title: "",
+  issuer: "",
+  issued_date: "",
+  credential_url: "",
+};
+
+function certificationToForm(c) {
+  if (!c) return emptyCertificationForm;
+  return {
+    title: c.title,
+    issuer: c.issuer,
+    issued_date: c.issued_date,
+    credential_url: c.credential_url,
+  };
 }
 
 export default function DashboardPage() {
@@ -63,8 +81,22 @@ export default function DashboardPage() {
     setStatus: setSkillStatus,
   } = useSkillsStore();
 
+  const {
+    certifications,
+    isEditorOpen: isCertificationEditorOpen,
+    editingCertification,
+    status: certificationStatus,
+    errorMessage: certificationError,
+    setCertifications,
+    openCreate: openCreateCertification,
+    openEdit: openEditCertification,
+    closeEditor: closeCertificationEditor,
+    setStatus: setCertificationStatus,
+  } = useCertificationsStore();
+
   const [projectForm, setProjectForm] = useState(emptyProjectForm);
   const [skillForm, setSkillForm] = useState(emptySkillForm);
+  const [certificationForm, setCertificationForm] = useState(emptyCertificationForm);
   const [imageFile, setImageFile] = useState(null);
   const [imageUploading, setImageUploading] = useState(false);
 
@@ -72,6 +104,7 @@ export default function DashboardPage() {
     if (session) {
       refreshProjects();
       refreshSkills();
+      refreshCertifications();
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [session]);
@@ -84,6 +117,10 @@ export default function DashboardPage() {
   useEffect(() => {
     setSkillForm(skillGroupToForm(editingSkillGroup));
   }, [editingSkillGroup, isSkillEditorOpen]);
+
+  useEffect(() => {
+    setCertificationForm(certificationToForm(editingCertification));
+  }, [editingCertification, isCertificationEditorOpen]);
 
   async function refreshProjects() {
     const { data } = await supabase
@@ -99,6 +136,14 @@ export default function DashboardPage() {
       .select("id, group_name, items")
       .order("sort_order", { ascending: true });
     setSkills(data ?? []);
+  }
+
+  async function refreshCertifications() {
+    const { data } = await supabase
+      .from("certifications")
+      .select("id, title, issuer, issued_date, credential_url")
+      .order("sort_order", { ascending: true });
+    setCertifications(data ?? []);
   }
 
   // ── Projects ────────────────────────────────────────────────────────────
@@ -221,6 +266,58 @@ export default function DashboardPage() {
     setSkillStatus("idle");
   }
 
+  // ── Certifications ──────────────────────────────────────────────────────
+
+  async function handleSaveCertification(e) {
+    e.preventDefault();
+    setCertificationStatus("saving");
+
+    const payload = {
+      title: certificationForm.title,
+      issuer: certificationForm.issuer,
+      issued_date: certificationForm.issued_date,
+      credential_url: certificationForm.credential_url || "#",
+    };
+
+    const query = editingCertification
+      ? supabase.from("certifications").update(payload).eq("id", editingCertification.id)
+      : supabase
+          .from("certifications")
+          .insert({ ...payload, sort_order: certifications.length + 1 });
+
+    const { error } = await query;
+
+    if (error) {
+      setCertificationStatus("error", error.message);
+      return;
+    }
+
+    await refreshCertifications();
+    setCertificationStatus("idle");
+    closeCertificationEditor();
+  }
+
+  async function handleDeleteCertification(certification) {
+    const confirmed = window.confirm(
+      `Delete "${certification.title}"? This can't be undone.`
+    );
+    if (!confirmed) return;
+
+    setCertificationStatus("deleting");
+    const { error } = await supabase
+      .from("certifications")
+      .delete()
+      .eq("id", certification.id);
+
+    if (error) {
+      setCertificationStatus("error", error.message);
+      return;
+    }
+
+    await refreshCertifications();
+    setCertificationStatus("idle");
+  }
+
   async function handleSignOut() {
     await supabase.auth.signOut();
     navigate("/login");
@@ -341,6 +438,51 @@ export default function DashboardPage() {
                   <button
                     onClick={() => handleDeleteSkill(s)}
                     disabled={skillStatus === "deleting"}
+                    className="text-sm border border-border rounded-md px-3 py-1.5 text-red-400 hover:border-red-400 transition-colors disabled:opacity-50"
+                  >
+                    Delete
+                  </button>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+
+        {/* Certifications */}
+        <div>
+          <div className="flex items-center justify-between mb-4">
+            <h2 className="text-lg font-semibold">Certifications</h2>
+            <button
+              onClick={openCreateCertification}
+              className="text-sm bg-primary text-primary-foreground font-medium rounded-md px-4 py-2 hover:bg-primary/90 transition-colors"
+            >
+              + Add certification
+            </button>
+          </div>
+
+          <div className="glass rounded-2xl divide-y divide-border">
+            {certifications.length === 0 && (
+              <p className="p-6 text-muted-foreground text-sm">No certifications yet.</p>
+            )}
+            {certifications.map((c) => (
+              <div key={c.id} className="flex items-center justify-between p-4 gap-4">
+                <div className="min-w-0">
+                  <p className="font-medium truncate">{c.title}</p>
+                  <p className="text-muted-foreground text-sm truncate">
+                    {c.issuer}
+                    {c.issued_date ? ` · ${c.issued_date}` : ""}
+                  </p>
+                </div>
+                <div className="flex gap-2 shrink-0">
+                  <button
+                    onClick={() => openEditCertification(c)}
+                    className="text-sm border border-border rounded-md px-3 py-1.5 hover:border-primary/50 transition-colors"
+                  >
+                    Edit
+                  </button>
+                  <button
+                    onClick={() => handleDeleteCertification(c)}
+                    disabled={certificationStatus === "deleting"}
                     className="text-sm border border-border rounded-md px-3 py-1.5 text-red-400 hover:border-red-400 transition-colors disabled:opacity-50"
                   >
                     Delete
@@ -543,6 +685,104 @@ export default function DashboardPage() {
               <button
                 type="button"
                 onClick={closeSkillEditor}
+                className="px-4 py-2 rounded-md border border-border hover:border-primary/50 transition-colors"
+              >
+                Cancel
+              </button>
+            </div>
+          </form>
+        </div>
+      )}
+
+      {/* Certification editor modal */}
+      {isCertificationEditorOpen && (
+        <div className="fixed inset-0 bg-background/80 flex items-center justify-center p-6 z-50">
+          <form
+            onSubmit={handleSaveCertification}
+            className="w-full max-w-lg glass rounded-2xl p-6 glow-border"
+          >
+            <h3 className="text-xl font-semibold mb-4">
+              {editingCertification ? "Edit certification" : "New certification"}
+            </h3>
+
+            <div className="mb-3">
+              <label className="text-xs uppercase tracking-wider text-muted-foreground block mb-1">
+                Title
+              </label>
+              <input
+                type="text"
+                value={certificationForm.title}
+                onChange={(e) =>
+                  setCertificationForm({ ...certificationForm, title: e.target.value })
+                }
+                required
+                className="w-full px-3 py-2 bg-surface border border-border rounded-lg text-foreground text-sm focus:outline-none focus:ring-2 focus:ring-primary"
+              />
+            </div>
+
+            <div className="mb-3">
+              <label className="text-xs uppercase tracking-wider text-muted-foreground block mb-1">
+                Issuer
+              </label>
+              <input
+                type="text"
+                value={certificationForm.issuer}
+                onChange={(e) =>
+                  setCertificationForm({ ...certificationForm, issuer: e.target.value })
+                }
+                required
+                className="w-full px-3 py-2 bg-surface border border-border rounded-lg text-foreground text-sm focus:outline-none focus:ring-2 focus:ring-primary"
+              />
+            </div>
+
+            <div className="mb-3">
+              <label className="text-xs uppercase tracking-wider text-muted-foreground block mb-1">
+                Date (e.g. 2025)
+              </label>
+              <input
+                type="text"
+                value={certificationForm.issued_date}
+                onChange={(e) =>
+                  setCertificationForm({ ...certificationForm, issued_date: e.target.value })
+                }
+                className="w-full px-3 py-2 bg-surface border border-border rounded-lg text-foreground text-sm focus:outline-none focus:ring-2 focus:ring-primary"
+              />
+            </div>
+
+            <div className="mb-3">
+              <label className="text-xs uppercase tracking-wider text-muted-foreground block mb-1">
+                Credential link (optional)
+              </label>
+              <input
+                type="text"
+                value={certificationForm.credential_url}
+                onChange={(e) =>
+                  setCertificationForm({
+                    ...certificationForm,
+                    credential_url: e.target.value,
+                  })
+                }
+                className="w-full px-3 py-2 bg-surface border border-border rounded-lg text-foreground text-sm focus:outline-none focus:ring-2 focus:ring-primary"
+              />
+            </div>
+
+            {certificationStatus === "error" && certificationError && (
+              <p className="text-sm text-red-400 mb-3" role="alert">
+                {certificationError}
+              </p>
+            )}
+
+            <div className="flex gap-3 mt-5">
+              <button
+                type="submit"
+                disabled={certificationStatus === "saving"}
+                className="px-4 py-2 rounded-md bg-primary text-primary-foreground font-medium hover:bg-primary/90 transition-colors disabled:opacity-60"
+              >
+                {certificationStatus === "saving" ? "Saving..." : "Save"}
+              </button>
+              <button
+                type="button"
+                onClick={closeCertificationEditor}
                 className="px-4 py-2 rounded-md border border-border hover:border-primary/50 transition-colors"
               >
                 Cancel

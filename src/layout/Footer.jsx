@@ -1,4 +1,5 @@
 import { Github, Linkedin, Twitter, Heart } from "lucide-react";
+import { Link } from "react-router-dom";
 
 const socialLinks = [
   { icon: Github, href: "https://github.com/Med-Himri/", label: "GitHub" },
@@ -7,10 +8,10 @@ const socialLinks = [
 ];
 
 const footerLinks = [
-  { href: "#about", label: "About" },
-  { href: "#projects", label: "Projects" },
-  { href: "#experience", label: "Experience" },
-  { href: "#contact", label: "Contact" },
+  { href: "/#about", label: "About" },
+  { href: "/#projects", label: "Projects" },
+  { href: "/#experience", label: "Experience" },
+  { href: "/#contact", label: "Contact" },
 ];
 
 export const Footer = () => {

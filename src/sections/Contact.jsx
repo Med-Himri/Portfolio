@@ -15,14 +15,12 @@ const contactInfo = [
   {
     icon: Mail,
     label: "Email",
-    value: "your.email@example.com",
-    href: "mailto:your.email@example.com",
+    value: "himrimohamed20@gmail.com",
   },
   {
     icon: MapPin,
     label: "Location",
     value: "Morocco (remote)",
-    href: "#",
   },
 ];
 

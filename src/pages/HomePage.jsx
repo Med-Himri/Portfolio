@@ -3,11 +3,15 @@ import { Hero } from "@/sections/Hero";
 import { About } from "@/sections/About";
 import { Projects } from "@/sections/Projects";
 import { Experience } from "@/sections/Experience";
+import { Certifications } from "@/sections/Certifications";
 import { Testimonials } from "@/sections/Testimonials";
 import { Contact } from "@/sections/Contact";
 import { Footer } from "@/layout/Footer";
+import { useScrollToHash } from "@/lib/useScrollToHash";
 
 export default function HomePage() {
+  useScrollToHash();
+
   return (
     <div className="min-h-screen overflow-x-hidden">
       <Navbar />
@@ -16,6 +20,7 @@ export default function HomePage() {
         <About />
         <Projects />
         <Experience />
+        <Certifications />
         <Testimonials />
         <Contact />
       </main>

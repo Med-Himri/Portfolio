@@ -1,20 +1,23 @@
-const experiences = [
+const workItems = [
   {
     period: "2026 — Present",
     role: "Junior Data Scientist",
     company: "Freelance / Upwork",
     description:
-      "Building a freelance data analysis practice cleaning datasets, building dashboards, and applying ML to real business questions for clients.",
-    technologies: ["Python", "SQL", "Power BI", "Pandas", "NumPy", "Scikit-learn", "Tableau", "Excel", "Tensorflow", "Matplotlip"],
+      "Building a freelance data analysis practice — cleaning datasets, building dashboards, and applying ML to real business questions for clients.",
+    technologies: ["Python", "SQL", "Power BI", "Pandas"],
     current: true,
   },
+];
+
+const formationItems = [
   {
     period: "2026",
-    role: "Attendefy — Final Project (PFE)",
+    role: "Attendify — Final Project (PFE)",
     company: "SUP MTI Rabat",
     description:
       "Built a multi-tenant school attendance SaaS end-to-end: session management, parent alerts, an AI chatbot, and a Random Forest model predicting absence risk.",
-    technologies: ["Next.js", "Supabase", "TypeScript", "Python", "FastAPI", "Random Forest"],
+    technologies: ["Next.js", "Supabase", "FastAPI", "Random Forest"],
     current: false,
   },
   {
@@ -22,20 +25,68 @@ const experiences = [
     role: "Plant Disease Detection — Computer Vision",
     company: "SUP MTI Rabat (Year 1 Project)",
     description:
-      "Built a U-Net based image segmentation model to detect diseases on plant leaves, my first hands-on deep learning project from data preprocessing to model evaluation.",
-    technologies: ["Python", "U-Net", "Computer Vision", "Deep Learning", "TensorFlow", "YoloV8" ,"Streamlit"],
+      "Built a U-Net based image segmentation model to detect diseases on plant leaves, my first hands-on deep learning project — from data preprocessing to model evaluation.",
+    technologies: ["Python", "U-Net", "Computer Vision", "Deep Learning"],
     current: false,
   },
   {
-    period: "ALX Africa",
-    role: "Data Analytics Certificate",
-    company: "ALX",
+    period: "2024 — 2026",
+    role: "Master's in Data Science",
+    company: "SUP MTI Rabat, Morocco",
     description:
-      "Certified training in data analytics, focused on practical Excel and Power BI skills for real business reporting.",
-    technologies: ["Excel", "Power BI", "Data Visualization", "Data Cleaning", "Data Analysis", "SQL" ,"Python" ,"DAX"],
+      "Graduate studies covering statistics, machine learning, and data engineering, capped by the Attendify project above.",
+    technologies: ["Python", "ML", "Statistics", "SQL"],
     current: false,
   },
 ];
+
+const Track = ({ title, items }) => (
+  <div>
+    <h3 className="text-sm font-medium tracking-wider uppercase text-primary mb-8">
+      {title}
+    </h3>
+    <div className="relative pl-8">
+      <div className="absolute left-0 top-0 bottom-0 w-[2px] bg-gradient-to-b from-primary/70 via-primary/30 to-transparent shadow-[0_0_20px_rgba(255,106,77,0.5)]" />
+
+      <div className="space-y-8">
+        {items.map((item, idx) => (
+          <div
+            key={idx}
+            className="relative animate-fade-in"
+            style={{ animationDelay: `${(idx + 1) * 150}ms` }}
+          >
+            <div className="absolute -left-8 top-1.5 w-3 h-3 bg-primary rounded-full -translate-x-1/2 ring-4 ring-background z-10">
+              {item.current && (
+                <span className="absolute inset-0 rounded-full bg-primary animate-ping opacity-75" />
+              )}
+            </div>
+
+            <div className="glass p-6 rounded-2xl border border-primary/30 hover:border-primary/50 transition-all duration-500">
+              <span className="text-sm text-primary font-medium">
+                {item.period}
+              </span>
+              <h4 className="text-lg font-semibold mt-2">{item.role}</h4>
+              <p className="text-muted-foreground text-sm">{item.company}</p>
+              <p className="text-sm text-muted-foreground mt-4">
+                {item.description}
+              </p>
+              <div className="flex flex-wrap gap-2 mt-4">
+                {item.technologies.map((tech, techIdx) => (
+                  <span
+                    key={techIdx}
+                    className="px-3 py-1 bg-surface text-xs rounded-full text-muted-foreground"
+                  >
+                    {tech}
+                  </span>
+                ))}
+              </div>
+            </div>
+          </div>
+        ))}
+      </div>
+    </div>
+  </div>
+);
 
 export const Experience = () => {
   return (
@@ -75,63 +126,10 @@ export const Experience = () => {
           </p>
         </div>
 
-        {/* Timeline */}
-        <div className="relative">
-          <div className="timeline-glow absolute left-0 md:left-1/2 top-0 bottom-0 w-[2px] bg-gradient-to-b from-primary/70 via-primary/30 to-transparent md:-translate-x-1/2 shadow-[0_0_25px_rgba(32,178,166,0.8)]" />
-
-          {/* Experience Items */}
-          <div className="space-y-12">
-            {experiences.map((exp, idx) => (
-              <div
-                key={idx}
-                className="relative grid md:grid-cols-2 gap-8 animate-fade-in"
-                style={{ animationDelay: `${(idx + 1) * 150}ms` }}
-              >
-                {/* Timeline Dot */}
-                <div className="absolute left-0 md:left-1/2 top-0 w-3 h-3 bg-primary rounded-full -translate-x-1/2 ring-4 ring-background z-10">
-                  {exp.current && (
-                    <span className="absolute inset-0 rounded-full bg-primary animate-ping opacity-75" />
-                  )}
-                </div>
-
-                {/* Content */}
-                <div
-                  className={`pl-8 md:pl-0 ${
-                    idx % 2 === 0
-                      ? "md:pr-16 md:text-right"
-                      : "md:col-start-2 md:pl-16"
-                  }`}
-                >
-                  <div
-                    className={`glass p-6 rounded-2xl border border-primary/30 hover:border-primary/50 transition-all duration-500`}
-                  >
-                    <span className="text-sm text-primary font-medium">
-                      {exp.period}
-                    </span>
-                    <h3 className="text-xl font-semibold mt-2">{exp.role}</h3>
-                    <p className="text-muted-foreground">{exp.company}</p>
-                    <p className="text-sm text-muted-foreground mt-4">
-                      {exp.description}
-                    </p>
-                    <div
-                      className={`flex flex-wrap gap-2 mt-4 ${
-                        idx % 2 === 0 ? "md:justify-end" : ""
-                      }`}
-                    >
-                      {exp.technologies.map((tech, techIdx) => (
-                        <span
-                          key={techIdx}
-                          className="px-3 py-1 bg-surface text-xs rounded-full text-muted-foreground"
-                        >
-                          {tech}
-                        </span>
-                      ))}
-                    </div>
-                  </div>
-                </div>
-              </div>
-            ))}
-          </div>
+        {/* Two tracks, side by side */}
+        <div className="grid md:grid-cols-2 gap-12">
+          <Track title="Work" items={workItems} />
+          <Track title="Formations" items={formationItems} />
         </div>
       </div>
     </section>

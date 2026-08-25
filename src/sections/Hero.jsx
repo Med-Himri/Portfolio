@@ -111,10 +111,7 @@ export const Hero = () => {
                 <a href="#contact">Contact Me</a>
                 <ArrowRight className="w-5 h-5" />
               </Button>
-              <AnimatedBorderButton>
-                <Download className="w-5 h-5" />
-                Download CV
-              </AnimatedBorderButton>
+              
             </div>
           </div>
           {/* Right Column - Profile Image */}
