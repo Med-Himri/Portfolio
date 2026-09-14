@@ -57,12 +57,12 @@ export const Projects = () => {
             Projects that
             <span className="font-serif italic font-normal text-white">
               {" "}
-              turn data into decisions.
+              turn ideas into products.
             </span>
           </h2>
           <p className="text-muted-foreground animate-fade-in animation-delay-200">
-            A selection of my recent work, from full ML pipelines to tools
-            that turn raw CSV exports into something a business can act on.
+            A selection of my recent work, from SaaS platforms to
+            e-commerce sites built end to end, frontend to database.
           </p>
         </div>
 

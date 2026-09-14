@@ -52,7 +52,7 @@ export const Contact = () => {
         const data = await res.json().catch(() => null);
         throw new Error(
           data?.errors?.map((er) => er.message).join(", ") ||
-            "Failed to send message. Please try again later."
+          "Failed to send message. Please try again later."
         );
       }
 
@@ -91,7 +91,7 @@ export const Contact = () => {
             </span>
           </h2>
           <p className="text-muted-foreground animate-fade-in animation-delay-200">
-            Have a dataset, dashboard, or prediction problem in mind? Send me
+            Have a web app, SaaS idea, or e-commerce project in mind? Send me
             a message and let's discuss how I can help.
           </p>
         </div>
@@ -181,11 +181,10 @@ export const Contact = () => {
               {submitStatus.type && (
                 <div
                   className={`flex items-center gap-3
-                     p-4 rounded-xl ${
-                       submitStatus.type === "success"
-                         ? "bg-green-500/10 border border-green-500/20 text-green-400"
-                         : "bg-red-500/10 border border-red-500/20 text-red-400"
-                     }`}
+                     p-4 rounded-xl ${submitStatus.type === "success"
+                      ? "bg-green-500/10 border border-green-500/20 text-green-400"
+                      : "bg-red-500/10 border border-red-500/20 text-red-400"
+                    }`}
                 >
                   {submitStatus.type === "success" ? (
                     <CheckCircle className="w-5 h-5 flex-shrink-0" />
@@ -232,9 +231,9 @@ export const Contact = () => {
                 <span className="font-medium">Currently Available</span>
               </div>
               <p className="text-muted-foreground text-sm">
-                I'm currently open to freelance data analysis and ML
-                projects cleaning data, building dashboards, or predictive
-                models. Let's talk about what you need.
+                I'm currently open to freelance full-stack development
+                projects building web apps, SaaS platforms, or e-commerce
+                sites end to end. Let's talk about what you need.
               </p>
             </div>
           </div>

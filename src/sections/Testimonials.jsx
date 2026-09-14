@@ -4,12 +4,12 @@ import { useState } from "react";
 const principles = [
   {
     quote:
-      "I'd rather spend an extra hour cleaning data than five minutes explaining why a chart is wrong.",
-    label: "On messy data",
+      "I'd rather spend an extra hour on the data model than five minutes explaining why the app broke in production.",
+    label: "On architecture",
   },
   {
     quote:
-      "A dashboard only matters if the person reading it can act on it in under a minute.",
+      "A feature only matters if the client can see it working, end to end, not just hear that it's done.",
     label: "On communication",
   },
   {
@@ -19,7 +19,7 @@ const principles = [
   },
   {
     quote:
-      "I'm early in my career, and I stay that way on purpose — always picking up the next SQL pattern or ML technique on real problems, not just tutorials.",
+      "I'm early in my career, and I stay that way on purpose — always picking up the next pattern or tool on real projects, not just tutorials.",
     label: "On growth",
   },
 ];

@@ -1,11 +1,11 @@
 const workItems = [
   {
     period: "2026 — Present",
-    role: "Junior Data Scientist",
+    role: "Junior Full Stack Developer",
     company: "Freelance / Upwork",
     description:
-      "Building a freelance data analysis practice — cleaning datasets, building dashboards, and applying ML to real business questions for clients.",
-    technologies: ["Python", "SQL", "Power BI", "Pandas"],
+      "Building a freelance full-stack development practice — designing and shipping complete web applications, from database to UI, for clients.",
+    technologies: ["React", "Next.js", "Node.js", "MongoDB"],
     current: true,
   },
 ];
